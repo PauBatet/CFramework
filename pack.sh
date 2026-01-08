@@ -53,15 +53,6 @@ for f in $FILES; do
         *"Dockerfile_postgres_standalone"*|*"docker-compose.postgres-standalone.yaml"*|*"Caddyfile_standalone"*)
             T_KEY="postgres_standalone_docker"
             ;;
-        *"Dockerfile_sqlite_deploy"*|*"docker-compose.sqlite-deploy.yaml"*|*"Caddyfile_deploy"*)
-            T_KEY="sqlite_docker_deploy"
-            ;;
-        *"Dockerfile_postgres_deploy"*|*"docker-compose.postgres-deploy.yaml"*|*"Caddyfile_deploy"*)
-            T_KEY="postgres_docker_deploy"
-            ;;
-        *"Dockerfile_postgres_standalone_deploy"*|*"docker-compose.postgres-standalone-deploy.yaml"*|*"Caddyfile_standalone_deploy"*)
-            T_KEY="postgres_standalone_docker_deploy"
-            ;;
         *)
             T_KEY="base"
             ;;
