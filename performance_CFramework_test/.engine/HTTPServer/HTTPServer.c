@@ -274,7 +274,7 @@ void HTTPServer_send_response(HTTPRequest *request, const char *body, const char
 	write(request->client_socket, body, content_length);
   shutdown(request->client_socket, SHUT_WR);
   char junk[1024];
-  while(read(request->client_socket, junk, sizeof(junk)) > 0){}
+  while(read(request->client_socket, junk, sizeof(junk)) > 0) {}
 	close(request->client_socket);
 }
 

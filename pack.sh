@@ -44,20 +44,24 @@ for f in $FILES; do
         *".engine/"*)
             T_KEY="core"
             ;;
-        *"Dockerfile_sqlite"*|*"docker-compose.sqlite.yaml"*|*"Caddyfile"*)
-            T_KEY="sqlite_docker"
-            ;;
-        *"Dockerfile_postgres"*|*"docker-compose.postgres.yaml"*|*"Caddyfile"*)
-            T_KEY="postgres_docker"
-            ;;
+        # 1. STANDALONE (Most specific pattern first)
         *"Dockerfile_postgres_standalone"*|*"docker-compose.postgres-standalone.yaml"*|*"Caddyfile_standalone"*)
             T_KEY="postgres_standalone_docker"
             ;;
+        # 2. SQLITE
+        *"Dockerfile_sqlite"*|*"docker-compose.sqlite.yaml"*|*"Caddyfile_sqlite"*)
+            T_KEY="sqlite_docker"
+            ;;
+        # 3. POSTGRES
+        *"Dockerfile_postgres"*|*"docker-compose.postgres.yaml"*|*"Caddyfile_postgres"*)
+            T_KEY="postgres_docker"
+            ;;
+        # 4. DEFAULT
         *)
             T_KEY="base"
             ;;
     esac
-    
+
     # This will print EVERY file found and the key assigned to it
     echo "File: $CLEAN_PATH  ->  Tag: $T_KEY"
 

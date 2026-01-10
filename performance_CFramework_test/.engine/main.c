@@ -183,6 +183,7 @@ int run_worker() {
     // Set up signal handling
     signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
+    signal(SIGPIPE, SIG_IGN);
 
     server = HTTPServer_create(SERVER_PORT);
     if (!server) {
@@ -227,8 +228,6 @@ int run_worker() {
 int main() {
     setvbuf(stdout, NULL, _IONBF, 0);
     setvbuf(stderr, NULL, _IONBF, 0);
-    signal(SIGPIPE, SIG_IGN);
-
     load_config_from_env();
     bool in_container = (getpid() == 1);
 
