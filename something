@@ -1,0 +1,55 @@
+    namespace Models {
+        class GeneratedModels_h {
+            <<Header>>
+        }
+        class User {
+            <<struct>>
+            char* DNI
+            char* name
+            int age
+            char* email
+            int group_id
+            User_create() bool
+            User_create_many() bool
+            User_read() bool
+            User_read_for_update() bool
+            User_read_all() bool
+            User_read_all_for_update() bool
+            User_update() bool
+            User_update_many() bool
+            User_delete() bool
+            User_delete_many() bool
+            User_query_unsafe() bool
+            User_free() void
+            UserList_free() void
+        }
+        class UserList {
+            <<struct>>
+            User* items
+            size_t count
+        }
+        class Group {
+            <<struct>>
+            int id
+            char* name
+            int num_members
+            Group_create() bool
+            Group_create_many() bool
+            Group_read() bool
+            Group_read_for_update() bool
+            Group_read_all() bool
+            Group_read_all_for_update() bool
+            Group_update() bool
+            Group_update_many() bool
+            Group_delete() bool
+            Group_delete_many() bool
+            Group_query_unsafe() bool
+            Group_free() void
+            GroupList_free() void
+        }
+        class GroupList {
+            <<struct>>
+            Group* items
+            size_t count
+        }
+    }
