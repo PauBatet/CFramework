@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Concepts | CFramework Docs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        .sidebar { background-color: #0b1120; border-right: 1px solid #1e293b; }
+        .content-area { max-width: 800px; }
+        .code-inline { font-family: 'Fira Code', monospace; background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: #38bdf8; }
+        pre { font-family: 'Fira Code', monospace; background: #0f172a; border: 1px solid #1e293b; padding: 1.25rem; border-radius: 0.75rem; overflow-x: auto; margin: 1.5rem 0 2.5rem 0; }
+        h2 { border-bottom: 1px solid #1e293b; padding-bottom: 0.5rem; margin-top: 3rem; }
+        .nav-active { color: #38bdf8 !important; font-weight: 600; }
+        .note { border-left: 4px solid #38bdf8; background: #0f172a; padding: 1rem; margin: 1.5rem 0; border-radius: 0 0.5rem 0.5rem 0; }
+        .concept-card { background: #0b1120; border: 1px solid #1e293b; padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body class="antialiased flex">
+
+    <aside class="sidebar fixed h-screen w-64 overflow-y-auto hidden md:block">
+        <div class="p-6">
+            <a href="/" class="flex items-center space-x-3 mb-10">
+                <span class="font-bold tracking-tight text-lg">CFramework</span>
+            </a>
+            <nav class="space-y-8">
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Introduction</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/docs" class="hover:text-white transition-colors">Getting Started</a></li>
+                        <li><a href="/core-concepts" class="nav-active">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Development</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/routing" class="hover:text-white transition-colors">Routing</a></li>
+                        <li><a href="/views" class="hover:text-white transition-colors">Views</a></li>
+                        <li><a href="/models" class="hover:text-white transition-colors">Models</a></li>
+                        <li><a href="/templates" class="hover:text-white transition-colors">Templates</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Deployment</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/docker" class="hover:text-white transition-colors">Docker Presets</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="md:ml-64 flex-1 min-h-screen">
+        <header class="h-16 border-b border-slate-800 flex items-center px-8 bg-slate-900/50 sticky top-0 backdrop-blur-md z-10">
+            <div class="text-sm text-slate-400">
+                Docs <span class="mx-2 text-slate-600">/</span> <span class="text-white font-medium">Core Concepts</span>
+            </div>
+        </header>
+
+        <div class="px-8 py-12">
+            <div class="content-area mx-auto">
+                <h1 class="text-4xl font-bold mb-6">Core Concepts</h1>
+                <p class="text-lg text-slate-400 leading-relaxed mb-8">
+                    CFramework is built on the philosophy of <b>Compiled Efficiency</b>. Unlike interpreted frameworks, every route, model, and view is part of a single, highly-optimized binary.
+                </p>
+
+                <section id="database-agnostic">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">1. Database Backend Selection</h2>
+                    <p class="text-slate-300 mb-4">
+                        CFramework is designed to be backend-agnostic. You can switch between a lightweight, file-based <b>SQLite</b> database or a robust <b>PostgreSQL</b> instance simply by modifying <span class="code-inline">config.c</span>.
+                    </p>
+                    <pre><code class="text-emerald-400">// config.c
+const char *DB_BACKEND = DB_SQLITE;
+// or
+const char *DB_BACKEND = DB_POSTGRES;</code></pre>
+                    <p class="text-slate-400 text-sm">
+                        This selection changes how the internal generator produces your Model SQL and how the binary interacts with the data layer, without changing your business logic code.
+                    </p>
+                </section>
+
+                <section id="lifecycle">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">2. Request Lifecycle</h2>
+                    <p class="text-slate-300 mb-4">
+                        When a request hits your application, it follows a strict path:
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="concept-card">
+                            <h4 class="text-blue-400 font-bold mb-2">1. Front-end Proxy (Caddy)</h4>
+                            <p class="text-sm text-slate-400">Caddy receives the raw HTTP/HTTPS connection, handles TLS, and forwards the request to the C binary.</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4 class="text-blue-400 font-bold mb-2">2. Router Dispatch</h4>
+                            <p class="text-sm text-slate-400">The internal router parses the URL, extracts parameters (like <span class="code-inline">DNI</span>), and executes the matching View function.</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4 class="text-blue-400 font-bold mb-2">3. View Execution</h4>
+                            <p class="text-sm text-slate-400">Your C code interacts with the Database using the generated Models API and prepares data for the template.</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4 class="text-blue-400 font-bold mb-2">4. Template Injection</h4>
+                            <p class="text-sm text-slate-400">The template engine performs a single-pass string substitution and sends the final HTML back through the socket.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="codegen">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">3. The Role of Code Generation</h2>
+                    <p class="text-slate-300 mb-4">
+                        CFramework uses a <b>Static Schema</b> approach. When you register a model, the framework generates:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-400 ml-4 mb-6">
+                        <li><span class="code-inline">.h</span> files with type-safe C structs.</li>
+                        <li><span class="code-inline">.c</span> files with SQL statements optimized for your backend (SQLite/Postgres).</li>
+                        <li>Automated Migration scripts to sync your DB with your C structures.</li>
+                    </ul>
+                    <div class="note">
+                        This eliminates the need for a runtime Reflection API or heavy ORM overhead, resulting in near-instantaneous database operations.
+                    </div>
+                </section>
+
+                <section id="memory-ownership">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">4. Memory Ownership</h2>
+                    <p class="text-slate-300 mb-4">
+                        Managing memory is the only "manual" part of CFramework. To keep the framework fast and leak-free:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-400 ml-4">
+                        <li><b>Database Reads:</b> The <span class="code-inline">_read</span> functions use <span class="code-inline">strdup()</span> for strings. You <u>must</u> call <span class="code-inline">_free()</span>.</li>
+                        <li><b>Template Params:</b> The framework manages the memory of tokens injected into templates if they are produced via <span class="code-inline">process_html</span>, but the View must free its own local buffers.</li>
+                    </ul>
+                </section>
+
+                <div class="mt-16 pt-8 border-t border-slate-800 flex justify-between">
+                    <a href="/docs" class="group">
+                        <span class="text-xs text-slate-500 block mb-1">Previous</span>
+                        <span class="text-slate-400 font-bold group-hover:underline text-lg">&larr; Getting Started</span>
+                    </a>
+                    <a href="/routing" class="group text-right">
+                        <span class="text-xs text-slate-500 block mb-1">Next Topic</span>
+                        <span class="text-blue-400 font-bold group-hover:underline text-lg">Routing &rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -147,3 +147,33 @@ void example(HTTPRequest *request, Database *db) {
     render_html(request, "example.html", params, 7);
     free(jobsTemplate);
 }
+
+void method_test_view(HTTPRequest *request, Database *db) {
+    (void)db; // No necessitem la DB per aquesta prova
+    
+    char *body;
+    int status_code = 200;
+
+    if (strcmp(request->method, "GET") == 0) {
+        body = "<h1>Mètode GET detectat</h1><p>Lògica de LECTURA executada correctament.</p>";
+    } 
+    else if (strcmp(request->method, "POST") == 0) {
+        body = "<h1>Mètode POST detectat</h1><p>Lògica de CREACIÓ executada correctament.</p>";
+    } 
+    else if (strcmp(request->method, "PUT") == 0) {
+        body = "<h1>Mètode PUT detectat</h1><p>Lògica d'ACTUALITZACIÓ TOTAL executada correctament.</p>";
+    } 
+    else if (strcmp(request->method, "PATCH") == 0) {
+        body = "<h1>Mètode PATCH detectat</h1><p>Lògica d'ACTUALITZACIÓ PARCIAL executada correctament.</p>";
+    } 
+    else if (strcmp(request->method, "DELETE") == 0) {
+        body = "<h1>Mètode DELETE detectat</h1><p>Lògica d'ELIMINACIÓ executada correctament.</p>";
+    } 
+    else {
+        body = "<h1>Mètode desconegut</h1>";
+        status_code = 405; // Method Not Allowed
+    }
+
+    // Enviem la resposta segons el mètode identificat
+    HTTPServer_send_response(request, body, "text/html", status_code, "");
+}

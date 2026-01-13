@@ -5,5 +5,6 @@ Route routes[] = {
   {"/wait", wait},
   {"/create-user", create_user_view},
   {"/user/<DNI>/profile", create_user_view},
-  {"/example", example}
+  {"/example", example},
+  {"/test-methods", method_test_view},
 };

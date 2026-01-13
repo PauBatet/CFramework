@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Presets | CFramework Docs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        .sidebar { background-color: #0b1120; border-right: 1px solid #1e293b; }
+        .content-area { max-width: 800px; }
+        .code-inline { font-family: 'Fira Code', monospace; background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: #38bdf8; }
+        pre { font-family: 'Fira Code', monospace; background: #0f172a; border: 1px solid #1e293b; padding: 1.25rem; border-radius: 0.75rem; overflow-x: auto; margin: 1.5rem 0 2.5rem 0; }
+        h2 { border-bottom: 1px solid #1e293b; padding-bottom: 0.5rem; margin-top: 3rem; }
+        .nav-active { color: #38bdf8 !important; font-weight: 600; }
+        .note { border-left: 4px solid #ef4444; background: #0f172a; padding: 1rem; margin: 1.5rem 0; border-radius: 0 0.5rem 0.5rem 0; }
+        .command-box { background: #000; color: #fff; padding: 1rem; border-radius: 0.5rem; font-family: 'Fira Code', monospace; border: 1px solid #334155; position: relative; }
+        .command-box::before { content: "$ "; color: #10b981; }
+    </style>
+</head>
+<body class="antialiased flex">
+
+    <aside class="sidebar fixed h-screen w-64 overflow-y-auto hidden md:block">
+        <div class="p-6">
+            <a href="/" class="flex items-center space-x-3 mb-10">
+                <span class="font-bold tracking-tight text-lg">CFramework</span>
+            </a>
+            <nav class="space-y-8">
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Introduction</h5>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="/docs" class="text-slate-400 hover:text-white transition-colors">Getting Started</a></li>
+                        <li><a href="/core-concepts" class="text-slate-400 hover:text-white transition-colors">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Development</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/routing" class="text-slate-400 hover:text-white transition-colors">Routing</a></li>
+                        <li><a href="/views" class="text-slate-400 hover:text-white transition-colors">Views</a></li>
+                        <li><a href="/models" class="text-slate-400 hover:text-white transition-colors">Models</a></li>
+                        <li><a href="/templates" class="text-slate-400 hover:text-white transition-colors">Templates</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Deployment</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/docker" class="nav-active">Docker Presets</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="md:ml-64 flex-1 min-h-screen">
+        <header class="h-16 border-b border-slate-800 flex items-center px-8 bg-slate-900/50 sticky top-0 backdrop-blur-md z-10">
+            <div class="text-sm text-slate-400">
+                Docs <span class="mx-2 text-slate-600">/</span> <span class="text-white font-medium">Docker Presets</span>
+            </div>
+        </header>
+
+        <div class="px-8 py-12">
+            <div class="content-area mx-auto">
+                <h1 class="text-4xl font-bold mb-6">Docker Presets</h1>
+                <p class="text-lg text-slate-400 leading-relaxed mb-8">
+                    CFramework provides pre-configured container architectures to streamline deployment. These presets include high-performance Caddy front-ends for TLS termination and automatic project recompilation.
+                </p>
+
+                
+
+                <section id="sqlite">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">1. SQLite Architecture</h2>
+                    <p class="text-slate-300 mb-4">
+                        Ideal for development or applications with moderate persistence needs. The database is a file stored in a Docker volume shared with the application container.
+                    </p>
+                    <div class="command-box mb-4">CFramework sqlite_docker</div>
+                    <ul class="list-disc list-inside space-y-2 text-slate-400 ml-4">
+                        <li>Minimal resource footprint.</li>
+                        <li>Persistent storage via Docker volumes.</li>
+                        <li>Caddy handles all incoming HTTP/HTTPS traffic.</li>
+                    </ul>
+                </section>
+
+                <section id="postgres-integrated">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">2. PostgreSQL Integrated</h2>
+                    <p class="text-slate-300 mb-4">
+                        A self-contained environment where the PostgreSQL engine runs as a sidecar service.
+                    </p>
+                    <div class="command-box mb-4">CFramework postgres_docker</div>
+                    <p class="text-slate-300 mb-4">
+                        The application container includes a health-check dependency, ensuring the C server only boots once the Postgres engine is ready to accept connections.
+                    </p>
+                    <pre><code class="text-blue-300"># The startup sequence automatically handles:
+1. Project Recompilation
+2. Database Migration Execution
+3. Server Launch</code></pre>
+                </section>
+
+                <section id="postgres-standalone">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">3. PostgreSQL Standalone</h2>
+                    <p class="text-slate-300 mb-4">
+                        Designed for production environments where the database is hosted on a managed service (like AWS RDS) or a dedicated external server.
+                    </p>
+                    <div class="command-box mb-4">CFramework postgres_standalone_docker</div>
+                    <p class="text-slate-300 mb-4">
+                        This preset removes the local database container. Connection parameters are passed strictly through environment variables, facilitating secure secrets management.
+                    </p>
+                </section>
+
+                <section id="front-end">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">Caddy: The Front-end</h2>
+                    <p class="text-slate-300 mb-4">
+                        All presets utilize <b>Caddy</b>. This allows the C application to focus purely on business logic while Caddy manages:
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-400 ml-4">
+                        <li>Automatic TLS (SSL) certificates.</li>
+                        <li>HTTP/2 and HTTP/3 support.</li>
+                        <li>Static file serving for the <span class="code-inline">static/</span> directory.</li>
+                    </ul>
+                </section>
+
+                <div class="note">
+                    <strong class="text-white">Pro Tip:</strong> Use the integrated presets for CI/CD pipelines to ensure the environment exactly matches your production standalone configuration.
+                </div>
+
+                <div class="mt-16 pt-8 border-t border-slate-800 flex justify-between">
+                    <a href="/templates" class="group">
+                        <span class="text-xs text-slate-500 block mb-1">Previous</span>
+                        <span class="text-slate-400 font-bold group-hover:underline text-lg">&larr; Templates</span>
+                    </a>
+                    <a href="/docs" class="group text-right">
+                        <span class="text-xs text-slate-500 block mb-1">Back to Start</span>
+                        <span class="text-blue-400 font-bold group-hover:underline text-lg">Getting Started &rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

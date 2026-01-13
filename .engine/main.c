@@ -134,7 +134,7 @@ void handle_request(HTTPRequest *request, Database *db) {
             return;
         }
     }
-    HTTPServer_send_response(request, "", "", 404, "<h1>404 Not Found</h1>");
+    HTTPServer_send_response(request, "<h1>404 Not Found</h1>", "", 404, "");
 }
 
 // Worker thread function
