@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation | CFramework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+        }
+        .sidebar {
+            background-color: #0b1120;
+            border-right: 1px solid #1e293b;
+        }
+        .content-area {
+            max-width: 800px;
+        }
+        .code-inline {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #38bdf8;
+        }
+        pre {
+            font-family: 'Fira Code', monospace;
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            margin: 1.5rem 0 2.5rem 0;
+        }
+        h2 { border-bottom: 1px solid #1e293b; padding-bottom: 0.5rem; margin-top: 3rem; }
+        .nav-active { color: #38bdf8 !important; font-weight: 600; }
+    </style>
+</head>
+<body class="antialiased flex">
+
+    <aside class="sidebar fixed h-screen w-64 overflow-y-auto hidden md:block">
+        <div class="p-6">
+            <a href="index.html" class="flex items-center space-x-3 mb-10">
+                <span class="font-bold tracking-tight text-lg">CFramework</span>
+            </a>
+
+            <nav class="space-y-8">
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Introduction</h5>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="/docs" class="nav-active">Getting Started</a></li>
+                        <li><a href="/core-concepts" class="text-slate-400 hover:text-white transition-colors">Core Concepts</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Development</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/routing" class="hover:text-white transition-colors">Routing</a></li>
+                        <li><a href="/views" class="hover:text-white transition-colors">Views</a></li>
+                        <li><a href="/models" class="hover:text-white transition-colors">Models</a></li>
+                        <li><a href="/templates" class="hover:text-white transition-colors">Templates</a></li>                    
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Deployment</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/docker" class="hover:text-white transition-colors">Docker Presets</a></li>
+                    </ul>
+                </div>
+             </nav>
+        </div>
+    </aside>
+
+    <main class="md:ml-64 flex-1 min-h-screen">
+        <header class="h-16 border-b border-slate-800 flex items-center px-8 bg-slate-900/50 sticky top-0 backdrop-blur-md z-10">
+            <div class="text-sm text-slate-400">
+                Docs <span class="mx-2 text-slate-600">/</span> <span class="text-white font-medium">Getting Started</span>
+            </div>
+            <div class="ml-auto">
+                <a href="https://github.com/PauBatet/CFramework" class="text-xs bg-slate-800 hover:bg-slate-700 py-1.5 px-3 rounded-md border border-slate-700 transition-all">
+                    v1.0.0-stable
+                </a>
+            </div>
+        </header>
+
+        <div class="px-8 py-12">
+            <div class="content-area mx-auto">
+                <h1 class="text-4xl font-bold mb-6">Getting Started</h1>
+                <p class="text-lg text-slate-400 leading-relaxed mb-8">
+                    Learn how to set up your environment and build your first high-performance web application using <span class="text-white">CFramework</span>.
+                </p>
+
+                <section id="requirements">
+                    <h2 class="text-2xl font-bold text-white mb-4">System Requirements</h2>
+                    <p class="text-slate-300 mb-4">Ensure your development environment meets the following specifications before continuing:</p>
+                    <ul class="list-disc list-inside space-y-2 text-slate-400 ml-4 mb-6">
+                        <li>GCC 9.0 or higher</li>
+                        <li>GNU Make 4.1+</li>
+                        <li>SQLite3 (for default database engine)</li>
+                        <li>Linux or MacOS (Windows via WSL2)</li>
+                    </ul>
+                </section>
+
+                <section id="installation">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">Manual Installation</h2>
+                    <p class="text-slate-300 mb-4">The core framework is distributed as a pre-compiled binary for project scaffolding. Execute the following in your terminal:</p>
+                    
+                    <pre><code class="text-emerald-400"># 1. Provide execution permissions
+chmod +x ./CFramework
+
+# 2. Run the binary to generate structure
+./CFramework</code></pre>
+
+                    <p class="text-slate-300 mb-4 font-semibold mt-8 italic">The generator will create the following directory tree:</p>
+                    <pre><code class="text-blue-300 text-sm">.
+├── config.c
+├── config.h
+├── Makefile
+├── models.c
+├── routes.c
+├── templates
+│   └── home.html
+└── views.c</code></pre>
+                </section>
+
+                <section id="server">
+                    <h2 class="text-2xl font-bold text-white mb-4">Starting the Server</h2>
+                    <p class="text-slate-300 mb-4">Once your structure is generated, use the provided <span class="code-inline">Makefile</span> to manage the application lifecycle.</p>
+                    <pre><code class="text-emerald-400">make migrate && make run</code></pre>
+                    <p class="text-slate-400 text-sm">This command compiles the project source, runs pending SQL migrations, and binds the web server to <span class="text-blue-400 underline">http://localhost:8080</span>.</p>
+                </section>
+
+                <div class="mt-16 pt-8 border-t border-slate-800 flex justify-between">
+                    <div></div>
+                    <a href="/core-concepts" class="group text-right">
+                        <span class="text-xs text-slate-500 block mb-1">Next Topic</span>
+                        <span class="text-blue-400 font-bold group-hover:underline text-lg">Core Concepts &rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

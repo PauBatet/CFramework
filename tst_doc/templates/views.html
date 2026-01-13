@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Views | CFramework Docs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        .sidebar { background-color: #0b1120; border-right: 1px solid #1e293b; }
+        .content-area { max-width: 800px; }
+        .code-inline { font-family: 'Fira Code', monospace; background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: #38bdf8; }
+        pre { font-family: 'Fira Code', monospace; background: #0f172a; border: 1px solid #1e293b; padding: 1.25rem; border-radius: 0.75rem; overflow-x: auto; margin: 1.5rem 0 2.5rem 0; }
+        h2 { border-bottom: 1px solid #1e293b; padding-bottom: 0.5rem; margin-top: 3rem; }
+        .nav-active { color: #38bdf8 !important; font-weight: 600; }
+        .note { border-left: 4px solid #ef4444; background: #0f172a; padding: 1rem; margin: 1.5rem 0; border-radius: 0 0.5rem 0.5rem 0; }
+    </style>
+</head>
+<body class="antialiased flex">
+
+    <aside class="sidebar fixed h-screen w-64 overflow-y-auto hidden md:block">
+        <div class="p-6">
+            <a href="/" class="flex items-center space-x-3 mb-10">
+                <span class="font-bold tracking-tight text-lg">CFramework</span>
+            </a>
+            <nav class="space-y-8">
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Introduction</h5>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="/docs" class="text-slate-400 hover:text-white transition-colors">Getting Started</a></li>
+                        <li><a href="/core-concepts" class="text-slate-400 hover:text-white transition-colors">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Development</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/routing" class="text-slate-400 hover:text-white transition-colors">Routing</a></li>
+                        <li><a href="/views" class="nav-active">Views</a></li>
+                        <li><a href="/models" class="hover:text-white transition-colors">Models</a></li>
+                        <li><a href="/templates" class="hover:text-white transition-colors">Templates</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Deployment</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/docker" class="hover:text-white transition-colors">Docker Presets</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="md:ml-64 flex-1 min-h-screen">
+        <header class="h-16 border-b border-slate-800 flex items-center px-8 bg-slate-900/50 sticky top-0 backdrop-blur-md z-10">
+            <div class="text-sm text-slate-400">
+                Docs <span class="mx-2 text-slate-600">/</span> <span class="text-white font-medium">Views</span>
+            </div>
+        </header>
+
+        <div class="px-8 py-12">
+            <div class="content-area mx-auto">
+                <h1 class="text-4xl font-bold mb-6">Views</h1>
+                <p class="text-lg text-slate-400 leading-relaxed mb-8">
+                    Views in CFramework are the bridge between raw HTTP requests and your database. They handle data extraction, business logic execution, and template orchestration.
+                </p>
+
+                <section id="anatomy">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">Anatomy of a View</h2>
+                    <p class="text-slate-300 mb-4">
+                        Every view function must match the framework signature: it takes a pointer to an <span class="code-inline">HTTPRequest</span> and a <span class="code-inline">Database</span> connection.
+                    </p>
+
+                    <pre><code class="text-emerald-400">void my_view(HTTPRequest *request, Database *db) {
+    // 1. Process Logic
+    // 2. Interact with Database
+    // 3. Send Response
+}</code></pre>
+                </section>
+
+                <section id="request-handling">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">1. Handling Route Parameters</h2>
+                    <p class="text-slate-300 mb-4">
+                        Data from dynamic routes is extracted using <span class="code-inline">HTTPRequest_get_param</span>. This provides immediate access to identifiers captured in <span class="code-inline">routes.c</span>.
+                    </p>
+                    <pre><code class="text-emerald-400">// In views.c
+void create_user_view(HTTPRequest *request, Database *db) {
+    const char *dni_param = HTTPRequest_get_param(request, "DNI");
+    // Result: "12345678X" (if requested /user/12345678X/profile)
+}</code></pre>
+                </section>
+
+                <section id="db-flow">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">2. Database Lifecycle: Read, Modify, Update</h2>
+                    <p class="text-slate-300 mb-4">
+                        A typical view involves fetching an existing record based on route parameters, modifying its fields in memory, and committing those changes back to the database.
+                    </p>
+                    <pre><code class="text-blue-300">void update_user_age_view(HTTPRequest *request, Database *db) {
+    const char *dni_param = HTTPRequest_get_param(request, "DNI");
+    User db_user = {0};
+
+    // 1. Fetch record from DB
+    if (User_read(db, (char *)dni_param, &db_user)) {
+        
+        // 2. Modify memory-resident struct
+        db_user.age = 31; 
+
+        // 3. Persist changes back to DB
+        User_update(db, (char *)dni_param, &db_user);
+
+        // 4. CRITICAL: Free strdup'ed strings returned by User_read
+        User_free(&db_user);
+    }
+}</code></pre>
+                    <div class="note">
+                        <strong class="text-white">Memory Management:</strong> Generated <span class="code-inline">_read</span> functions allocate memory for all string fields using <span class="code-inline">strdup</span>. Failing to call the generated<span class="code-inline">_free</span> function before the view finishes will result in memory leaks.
+                    </div>
+                </section>
+
+                <section id="advanced-rendering">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">3. Advanced Template Orchestration</h2>
+                    <p class="text-slate-300 mb-4">
+                        Complex layouts often require repeating elements or dynamic HTML generation. CFramework provides two ways to handle this.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-white mt-8 mb-2">Custom Field Converters</h3>
+                    <p class="text-slate-400 text-sm mb-4">You can pass a C array to a template and provide a converter function that iterates through the data to return a single HTML string.</p>
+                    <pre><code class="text-emerald-400">char* convert_projects(const void* value) {
+    const struct Project* p = (const struct Project*)value;
+    char* buffer = malloc(4096); // Allocated buffer
+    buffer[0] = '\0';
+    
+    for (int i = 0; i < 3; i++) {
+        char item_html[1024];
+        snprintf(item_html, sizeof(item_html), "&lt;h3&gt;%s&lt;/h3&gt;", p[i].title);
+        strcat(buffer, item_html);
+    }
+    return buffer; // Framework handles free() after injection
+}</code></pre>
+
+                    <h3 class="text-xl font-semibold text-white mt-8 mb-2">Partial Processing</h3>
+                    <p class="text-slate-400 text-sm mb-4">Use <span class="code-inline">process_html</span> to render small HTML fragments (partials) and concatenate them into a single token for the main template.</p>
+                    <pre><code class="text-emerald-400">char *jobs_html = malloc(8192);
+jobs_html[0] = '\0';
+
+for (int i = 0; i < job_count; i++) {
+    TemplateParam p[] = { {"title", jobs[i].title, NULL} };
+    strcat(jobs_html, process_html("job_card.html", p, 1));
+}
+
+TemplateParam main_p[] = { {"jobs_list", jobs_html, NULL} };
+render_html(request, "dashboard.html", main_p, 1);
+free(jobs_html);</code></pre>
+                </section>
+
+                <div class="mt-16 pt-8 border-t border-slate-800 flex justify-between">
+                    <a href="/routing" class="group">
+                        <span class="text-xs text-slate-500 block mb-1">Previous</span>
+                        <span class="text-slate-400 font-bold group-hover:underline text-lg">&larr; Routing</span>
+                    </a>
+                    <a href="/models" class="group text-right">
+                        <span class="text-xs text-slate-500 block mb-1">Next Topic</span>
+                        <span class="text-blue-400 font-bold group-hover:underline text-lg">Models &rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
