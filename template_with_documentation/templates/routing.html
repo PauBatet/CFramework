@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Routing | CFramework Docs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+        }
+        .sidebar {
+            background-color: #0b1120;
+            border-right: 1px solid #1e293b;
+        }
+        .content-area {
+            max-width: 800px;
+        }
+        .code-inline {
+            font-family: 'Fira Code', monospace;
+            background: #1e293b;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #38bdf8;
+        }
+        pre {
+            font-family: 'Fira Code', monospace;
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            margin: 1.5rem 0 2.5rem 0;
+        }
+        h2 { border-bottom: 1px solid #1e293b; padding-bottom: 0.5rem; margin-top: 3rem; }
+        .nav-active { color: #38bdf8 !important; font-weight: 600; }
+    </style>
+</head>
+<body class="antialiased flex">
+
+    <aside class="sidebar fixed h-screen w-64 overflow-y-auto hidden md:block">
+        <div class="p-6">
+            <a href="/" class="flex items-center space-x-3 mb-10">
+                <span class="font-bold tracking-tight text-lg">CFramework</span>
+            </a>
+
+            <nav class="space-y-8">
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Introduction</h5>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="/docs" class="text-slate-400 hover:text-white transition-colors">Getting Started</a></li>
+                        <li><a href="/core-concepts" class="text-slate-400 hover:text-white transition-colors">Core Concepts</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Development</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/routing" class="nav-active">Routing</a></li>
+                        <li><a href="/views" class="hover:text-white transition-colors">Views</a></li>
+                        <li><a href="/models" class="hover:text-white transition-colors">Models</a></li>
+                        <li><a href="/templates" class="hover:text-white transition-colors">Templates</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Deployment</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/docker" class="hover:text-white transition-colors">Docker Presets</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="md:ml-64 flex-1 min-h-screen">
+        <header class="h-16 border-b border-slate-800 flex items-center px-8 bg-slate-900/50 sticky top-0 backdrop-blur-md z-10">
+            <div class="text-sm text-slate-400">
+                Docs <span class="mx-2 text-slate-600">/</span> <span class="text-white font-medium">Routing</span>
+            </div>
+        </header>
+
+        <div class="px-8 py-12">
+            <div class="content-area mx-auto">
+                <h1 class="text-4xl font-bold mb-6">Routing</h1>
+                <p class="text-lg text-slate-400 leading-relaxed mb-8">
+                    Routes in CFramework define the relationship between a URL path and a C function. They are managed centrally in <span class="code-inline">routes.c</span>.
+                </p>
+
+                <section id="defining-routes">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">Defining Routes</h2>
+                    <p class="text-slate-300 mb-4">
+                        The routing system uses a simple array of <span class="code-inline">Route</span> structures. Each entry contains a path string and the name of the view function it triggers.
+                    </p>
+                    
+                    <pre><code class="text-emerald-400">// routes.c
+#include "views.c"
+
+Route routes[] = {
+    {"/", home},
+    {"/wait", wait},
+    {"/example", example}
+};</code></pre>
+                </section>
+
+                <section id="dynamic-parameters">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">Dynamic Parameters</h2>
+                    <p class="text-slate-300 mb-4">
+                        To capture variables from a URL, use the <span class="code-inline">&lt;PARAM&gt;</span> syntax. These captured values are passed to your view function and can be retrieved by name.
+                    </p>
+                    
+                    <pre><code class="text-blue-300">{"/user/&lt;DNI&gt;/profile", create_user_view}</code></pre>
+
+                    <p class="text-slate-300 mt-6">
+                        In the example above, if a user visits <span class="code-inline">/user/12345678X/profile</span>, the framework captures "12345678X" as the parameter <span class="code-inline">DNI</span>.
+                    </p>
+                </section>
+
+                <section id="accessing-params">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">Accessing Parameters in Views</h2>
+                    <p class="text-slate-300 mb-4">Inside your view function, use the <span class="code-inline">HTTPRequest_get_param</span> helper to retrieve the value.</p>
+                    
+                    <pre><code class="text-emerald-400">void create_user_view(HTTPRequest *request, Database *db) {
+    const char *dni = HTTPRequest_get_param(request, "DNI");
+    // 'dni' now holds "12345678X"
+}</code></pre>
+                </section>
+
+                <div class="mt-16 pt-8 border-t border-slate-800 flex justify-between">
+                    <a href="/core-concepts" class="group">
+                        <span class="text-xs text-slate-500 block mb-1">Previous</span>
+                        <span class="text-slate-400 font-bold group-hover:underline text-lg">&larr; Core Concepts</span>
+                    </a>
+                    <a href="/views" class="group text-right">
+                        <span class="text-xs text-slate-500 block mb-1">Next Topic</span>
+                        <span class="text-blue-400 font-bold group-hover:underline text-lg">Views &rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

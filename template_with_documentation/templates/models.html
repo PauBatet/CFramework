@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Models | CFramework Docs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        .sidebar { background-color: #0b1120; border-right: 1px solid #1e293b; }
+        .content-area { max-width: 800px; }
+        .code-inline { font-family: 'Fira Code', monospace; background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: #38bdf8; }
+        pre { font-family: 'Fira Code', monospace; background: #0f172a; border: 1px solid #1e293b; padding: 1.25rem; border-radius: 0.75rem; overflow-x: auto; margin: 1.5rem 0 2.5rem 0; }
+        h2 { border-bottom: 1px solid #1e293b; padding-bottom: 0.5rem; margin-top: 3rem; }
+        .nav-active { color: #38bdf8 !important; font-weight: 600; }
+        .note { border-left: 4px solid #ef4444; background: #0f172a; padding: 1rem; margin: 1.5rem 0; border-radius: 0 0.5rem 0.5rem 0; }
+        table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: #0b1120; border-radius: 0.5rem; overflow: hidden; }
+        th { background: #1e293b; text-align: left; padding: 0.75rem; font-size: 0.875rem; color: #94a3b8; }
+        td { padding: 0.75rem; border-bottom: 1px solid #1e293b; font-size: 0.875rem; }
+    </style>
+</head>
+<body class="antialiased flex">
+
+    <aside class="sidebar fixed h-screen w-64 overflow-y-auto hidden md:block">
+        <div class="p-6">
+            <a href="/" class="flex items-center space-x-3 mb-10">
+                <span class="font-bold tracking-tight text-lg">CFramework</span>
+            </a>
+            <nav class="space-y-8">
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Introduction</h5>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="/docs" class="text-slate-400 hover:text-white transition-colors">Getting Started</a></li>
+                        <li><a href="/core-concepts" class="text-slate-400 hover:text-white transition-colors">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Development</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/routing" class="text-slate-400 hover:text-white transition-colors">Routing</a></li>
+                        <li><a href="/views" class="text-slate-400 hover:text-white transition-colors">Views</a></li>
+                        <li><a href="/models" class="nav-active">Models</a></li>
+                        <li><a href="/templates" class="hover:text-white transition-colors">Templates</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Deployment</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/docker" class="hover:text-white transition-colors">Docker Presets</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="md:ml-64 flex-1 min-h-screen">
+        <header class="h-16 border-b border-slate-800 flex items-center px-8 bg-slate-900/50 sticky top-0 backdrop-blur-md z-10">
+            <div class="text-sm text-slate-400">
+                Docs <span class="mx-2 text-slate-600">/</span> <span class="text-white font-medium">Models</span>
+            </div>
+        </header>
+
+        <div class="px-8 py-12">
+            <div class="content-area mx-auto">
+                <h1 class="text-4xl font-bold mb-6">Database Models</h1>
+                <p class="text-lg text-slate-400 leading-relaxed mb-8">
+                    Models in CFramework are declared in C and automatically generate the necessary SQL schema, C structures, and CRUD functions.
+                </p>
+
+                <section id="declaration">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">1. Declaring Models</h2>
+                    <p class="text-slate-300 mb-4">
+                        Define your schema using <span class="code-inline">Field</span> and <span class="code-inline">ForeignKey</span> arrays. Use the <span class="code-inline">model()</span> function to register them.
+                    </p>
+                    <pre><code class="text-emerald-400">void register_group_model(void) {
+    Field user_fields[] = {
+        {"name", TYPE_STRING},
+        {"age", TYPE_INT},
+        {"email", TYPE_STRING},
+        {"group_id", TYPE_INT}
+    };
+
+    ForeignKey user_fk[] = {
+        {"group_id", "Group", "id"}
+    };
+
+    Field pk_field = { "DNI", TYPE_STRING };
+
+    // Syntax: model(name, primary_key, fields, field_count, fks, fk_count)
+    model("User", &pk_field, user_fields, 4, user_fk, 1);
+    
+    // Passing NULL for primary_key automatically creates an "id" SERIAL/INTEGER PRIMARY KEY
+    model("Group", NULL, group_fields, 2, NULL, 0);
+}</code></pre>
+
+                    <h3 class="text-xl font-semibold text-white mt-8 mb-2">Supported Field Types</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>C Constant</th>
+                                <th>SQL Mapping</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="code-inline">TYPE_INT</span></td><td>INTEGER</td></tr>
+                            <tr><td><span class="code-inline">TYPE_FLOAT</span></td><td>REAL / DOUBLE PRECISION</td></tr>
+                            <tr><td><span class="code-inline">TYPE_STRING</span></td><td>TEXT / VARCHAR</td></tr>
+                            <tr><td><span class="code-inline">TYPE_BOOL</span></td><td>BOOLEAN</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section id="generated-api">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">2. Generated CRUD API</h2>
+                    <p class="text-slate-300 mb-4">
+                        For every model (e.g., <span class="code-inline">User</span>), the framework generates a dedicated header and source file providing the following functions:
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-white mt-6 mb-2">Create & Update</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-400 ml-4">
+                        <li><span class="code-inline text-blue-300">bool User_create(db, &obj)</span>: Inserts a new record.</li>
+                        <li><span class="code-inline text-blue-300">bool User_update(db, &obj)</span>: Updates record based on Primary Key.</li>
+                        <li><span class="code-inline text-blue-300">bool User_create_many(db, &list)</span>: Batch insert within a transaction.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-white mt-8 mb-2">Read & Query</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-400 ml-4">
+                        <li><span class="code-inline text-blue-300">bool User_read(db, PK, &obj)</span>: Fetches a single record.</li>
+                        <li><span class="code-inline text-blue-300">bool User_read_all(db, &list)</span>: Fetches all records into a list.</li>
+                        <li><span class="code-inline text-red-400">bool User_query_unsafe(db, "where_clause", &list)</span>: Execute raw SQL filters.</li>
+                    </ul>
+
+                    <h3 class="text-xl font-semibold text-white mt-8 mb-2">Delete</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-400 ml-4">
+                        <li><span class="code-inline text-blue-300">bool User_delete(db, PK)</span>: Deletes a specific record.</li>
+                    </ul>
+                </section>
+
+                <section id="concurrency">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">3. Concurrency & Locking</h2>
+                    <p class="text-slate-300 mb-4">
+                        When using <b>PostgreSQL</b> as the backend, CFramework generates locking-aware read functions to handle row-level locks during transactions.
+                    </p>
+                    <pre><code class="text-blue-300">// Available in Postgres mode
+User_read_for_update(db, "12345678X", &user);
+User_read_all_for_update(db, &user_list);</code></pre>
+                    <p class="text-slate-400 text-sm">
+                        These functions append <span class="code-inline">FOR UPDATE</span> to the SQL query, preventing other transactions from modifying the rows until your current transaction finishes.
+                    </p>
+                </section>
+
+                <section id="memory">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">4. Essential Cleanup</h2>
+                    <p class="text-slate-300 mb-4">
+                        Because CFramework models utilize dynamic allocation for string fields, you must use the generated free functions to prevent memory leaks.
+                    </p>
+                    <pre><code class="text-emerald-400">// Single Object
+User_free(&user);
+
+// Lists
+UserList_free(&list);</code></pre>
+                    <div class="note">
+                        <strong class="text-white">Note:</strong> <span class="code-inline">User_read</span> automatically calls <span class="code-inline">User_free</span> on the target object before populating it, ensuring that reusing a struct variable doesn't leak previous data.
+                    </div>
+                </section>
+
+                <div class="mt-16 pt-8 border-t border-slate-800 flex justify-between">
+                    <a href="/views" class="group">
+                        <span class="text-xs text-slate-500 block mb-1">Previous</span>
+                        <span class="text-slate-400 font-bold group-hover:underline text-lg">&larr; Views</span>
+                    </a>
+                    <a href="/templates" class="group text-right">
+                        <span class="text-xs text-slate-500 block mb-1">Next Topic</span>
+                        <span class="text-blue-400 font-bold group-hover:underline text-lg">Templates &rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

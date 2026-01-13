@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Templates | CFramework Docs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        .sidebar { background-color: #0b1120; border-right: 1px solid #1e293b; }
+        .content-area { max-width: 800px; }
+        .code-inline { font-family: 'Fira Code', monospace; background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; color: #38bdf8; }
+        pre { font-family: 'Fira Code', monospace; background: #0f172a; border: 1px solid #1e293b; padding: 1.25rem; border-radius: 0.75rem; overflow-x: auto; margin: 1.5rem 0 2.5rem 0; }
+        h2 { border-bottom: 1px solid #1e293b; padding-bottom: 0.5rem; margin-top: 3rem; }
+        .nav-active { color: #38bdf8 !important; font-weight: 600; }
+        .note { border-left: 4px solid #ef4444; background: #0f172a; padding: 1rem; margin: 1.5rem 0; border-radius: 0 0.5rem 0.5rem 0; }
+    </style>
+</head>
+<body class="antialiased flex">
+
+    <aside class="sidebar fixed h-screen w-64 overflow-y-auto hidden md:block">
+        <div class="p-6">
+            <a href="/" class="flex items-center space-x-3 mb-10">
+                <span class="font-bold tracking-tight text-lg">CFramework</span>
+            </a>
+            <nav class="space-y-8">
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Introduction</h5>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="/docs" class="text-slate-400 hover:text-white transition-colors">Getting Started</a></li>
+                        <li><a href="/core-concepts" class="text-slate-400 hover:text-white transition-colors">Core Concepts</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Development</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/routing" class="text-slate-400 hover:text-white transition-colors">Routing</a></li>
+                        <li><a href="/views" class="text-slate-400 hover:text-white transition-colors">Views</a></li>
+                        <li><a href="/models" class="text-slate-400 hover:text-white transition-colors">Models</a></li>
+                        <li><a href="/templates" class="nav-active">Templates</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-4">Deployment</h5>
+                    <ul class="space-y-3 text-sm text-slate-400">
+                        <li><a href="/docker" class="hover:text-white transition-colors">Docker Presets</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="md:ml-64 flex-1 min-h-screen">
+        <header class="h-16 border-b border-slate-800 flex items-center px-8 bg-slate-900/50 sticky top-0 backdrop-blur-md z-10">
+            <div class="text-sm text-slate-400">
+                Docs <span class="mx-2 text-slate-600">/</span> <span class="text-white font-medium">Templates</span>
+            </div>
+        </header>
+
+        <div class="px-8 py-12">
+            <div class="content-area mx-auto">
+                <h1 class="text-4xl font-bold mb-6">Templates</h1>
+                <p class="text-lg text-slate-400 leading-relaxed mb-8">
+                    The CFramework template engine performs fast, direct string substitution. It searches for <span class="code-inline">.html</span> files within the <span class="code-inline">templates/</span> directory and replaces tokens with dynamic content.
+                </p>
+
+                <section id="syntax">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">1. Template Syntax</h2>
+                    <p class="text-slate-300 mb-4">
+                        Placeholders are defined using double curly braces <span class="code-inline">{{token}}</span>. There is no logic (if/loops) inside the HTML files; all logic is handled in C views.
+                    </p>
+                    <pre><code class="text-emerald-400">&lt;!-- templates/profile.html --&gt;
+&lt;header&gt;
+    &lt;h1&gt;{{name}}&lt;/h1&gt;
+    &lt;p&gt;{{title}}&lt;/p&gt;
+&lt;/header&gt;
+
+&lt;div class="container"&gt;
+    &lt;section class="profile"&gt;
+        &lt;img src="{{image_url}}" alt="{{name}}"&gt;
+        &lt;p&gt;{{about}}&lt;/p&gt;
+    &lt;/section&gt;
+    
+    &lt;section class="projects"&gt;
+        {{projects}}
+    &lt;/section&gt;
+&lt;/div&gt;</code></pre>
+                </section>
+
+                <section id="rendering">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">2. Rendering from Views</h2>
+                    <p class="text-slate-300 mb-4">
+                        Use the <span class="code-inline">render_html</span> function to send a template as an HTTP response. You pass an array of <span class="code-inline">TemplateParam</span> structures to map tokens to values.
+                    </p>
+                    <pre><code class="text-blue-300">void profile_view(HTTPRequest *request, Database *db) {
+    TemplateParam params[] = {
+        {"name",      "John Doe",      NULL},
+        {"title",     "C Developer",   NULL},
+        {"image_url", "/static/j.jpg", NULL},
+        {"year",      "2024",          NULL}
+    };
+
+    // Framework looks for "templates/profile.html"
+    render_html(request, "profile.html", params, 4);
+}</code></pre>
+                </section>
+
+                
+<section id="advanced-rendering">
+                    <h2 class="text-2xl font-bold text-white mb-4 mt-4">3. Advanced Template Orchestration</h2>
+                    <p class="text-slate-300 mb-4">
+                        Complex layouts often require repeating elements or dynamic HTML generation. CFramework provides two ways to handle this.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-white mt-8 mb-2">Custom Field Converters</h3>
+                    <p class="text-slate-400 text-sm mb-4">You can pass a C array to a template and provide a converter function that iterates through the data to return a single HTML string.</p>
+                    <pre><code class="text-emerald-400">char* convert_projects(const void* value) {
+    const struct Project* p = (const struct Project*)value;
+    char* buffer = malloc(4096); // Allocated buffer
+    buffer[0] = '\0';
+    
+    for (int i = 0; i < 3; i++) {
+        char item_html[1024];
+        snprintf(item_html, sizeof(item_html), "&lt;h3&gt;%s&lt;/h3&gt;", p[i].title);
+        strcat(buffer, item_html);
+    }
+    return buffer; // Framework handles free() after injection
+}</code></pre>
+
+                    <h3 class="text-xl font-semibold text-white mt-8 mb-2">Partial Processing</h3>
+                    <p class="text-slate-400 text-sm mb-4">Use <span class="code-inline">process_html</span> to render small HTML fragments (partials) and concatenate them into a single token for the main template.</p>
+                    <pre><code class="text-emerald-400">char *jobs_html = malloc(8192);
+jobs_html[0] = '\0';
+
+for (int i = 0; i < job_count; i++) {
+    TemplateParam p[] = { {"title", jobs[i].title, NULL} };
+    strcat(jobs_html, process_html("job_card.html", p, 1));
+}
+
+TemplateParam main_p[] = { {"jobs_list", jobs_html, NULL} };
+render_html(request, "dashboard.html", main_p, 1);
+free(jobs_html);</code></pre>
+                </section>
+
+                <div class="note">
+                    <strong class="text-white">Design Philosophy:</strong> By keeping logic out of the templates, CFramework ensures that the "View" layer remains strictly in C. This maximizes performance and forces a clean separation between data preparation and presentation.
+                </div>
+
+                <div class="mt-16 pt-8 border-t border-slate-800 flex justify-between">
+                    <a href="/models" class="group">
+                        <span class="text-xs text-slate-500 block mb-1">Previous</span>
+                        <span class="text-slate-400 font-bold group-hover:underline text-lg">&larr; Models</span>
+                    </a>
+                    <a href="/docker" class="group text-right">
+                        <span class="text-xs text-slate-500 block mb-1">Next Topic</span>
+                        <span class="text-blue-400 font-bold group-hover:underline text-lg">Docker Presets &rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
