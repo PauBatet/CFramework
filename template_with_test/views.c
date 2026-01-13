@@ -19,9 +19,11 @@ void home(HTTPRequest *request, Database *db) {
 }
 
 void create_user_view(HTTPRequest *request, Database *db) {
+    // ---- Fetch user DNI from route parameters ----
+    const char *dni_param = HTTPRequest_get_param(request, "DNI");
     // ---- Create test user ----
     User u = {
-        .DNI = "1",
+        .DNI = (char *)dni_param,
         .name = "John",
         .age = 30,
         .email = "john@example.com",
@@ -32,15 +34,6 @@ void create_user_view(HTTPRequest *request, Database *db) {
 
     if (!User_create(db, &u)) {
         result = "Failed to create user ❌";
-    }
-
-    // ---- Fetch user DNI from route parameters ----
-    const char *dni_param = NULL;
-    for (size_t i = 0; i < request->param_count; i++) {
-        if (strcmp(request->params[i].key, "DNI") == 0) {
-            dni_param = request->params[i].value;
-            break;
-        }
     }
 
     if (!dni_param) {
@@ -153,4 +146,34 @@ void example(HTTPRequest *request, Database *db) {
 
     render_html(request, "example.html", params, 7);
     free(jobsTemplate);
+}
+
+void method_test_view(HTTPRequest *request, Database *db) {
+    (void)db; // No necessitem la DB per aquesta prova
+    
+    char *body;
+    int status_code = 200;
+
+    if (strcmp(request->method, "GET") == 0) {
+        body = "<h1>Mètode GET detectat</h1><p>Lògica de LECTURA executada correctament.</p>";
+    } 
+    else if (strcmp(request->method, "POST") == 0) {
+        body = "<h1>Mètode POST detectat</h1><p>Lògica de CREACIÓ executada correctament.</p>";
+    } 
+    else if (strcmp(request->method, "PUT") == 0) {
+        body = "<h1>Mètode PUT detectat</h1><p>Lògica d'ACTUALITZACIÓ TOTAL executada correctament.</p>";
+    } 
+    else if (strcmp(request->method, "PATCH") == 0) {
+        body = "<h1>Mètode PATCH detectat</h1><p>Lògica d'ACTUALITZACIÓ PARCIAL executada correctament.</p>";
+    } 
+    else if (strcmp(request->method, "DELETE") == 0) {
+        body = "<h1>Mètode DELETE detectat</h1><p>Lògica d'ELIMINACIÓ executada correctament.</p>";
+    } 
+    else {
+        body = "<h1>Mètode desconegut</h1>";
+        status_code = 405; // Method Not Allowed
+    }
+
+    // Enviem la resposta segons el mètode identificat
+    HTTPServer_send_response(request, body, "text/html", status_code, "");
 }
