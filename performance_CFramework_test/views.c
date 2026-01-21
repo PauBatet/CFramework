@@ -8,6 +8,5 @@
 
 void home(HTTPRequest *request, Database *db) {
     (void)db;
-    const char *body = "Hello World";
-    HTTPServer_send_response(request, body, "", 200, "");
+    render_html(request, "home.html", NULL, 0);
 }

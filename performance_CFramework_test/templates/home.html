@@ -1,62 +1,135 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your C Web Project</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Framework | Modern Web in C</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            font-family: "Segoe UI", Roboto, Arial, sans-serif;
-            background-color: #1e1e1e; /* deep grey, not full black */
-            color: #dedede;
-            height: 100vh;
-            display: flex;
-            align-items: center;      /* vertical center */
-            justify-content: center;  /* horizontal center */
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; 
+            color: #f8fafc;
         }
-
-        .card {
-            background-color: #2a2a2a;
-            padding: 40px 50px;
-            border-radius: 14px;
-            text-align: center;
-            max-width: 600px;
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.35);
+        .hero-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80vh;
+            background: radial-gradient(circle at 50% -10%, rgba(56, 189, 248, 0.12) 0%, rgba(2, 6, 23, 0) 75%);
+            z-index: -1;
+            pointer-events: none;
         }
-
-        h1 {
-            margin: 0 0 15px 0;
-            font-size: 2rem;
-            font-weight: 600;
+        .logo-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 2.5rem 4rem;
+            border-radius: 2.5rem;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
         }
-
-        p {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #c7c7c7;
+        .code-block {
+            font-family: 'Fira Code', monospace;
+            background: #0f172a;
+            border: 1px solid #1e293b;
         }
-
-        .hint {
-            margin-top: 25px;
-            font-size: 0.95rem;
-            opacity: 0.85;
+        .step-number {
+            background: linear-gradient(135deg, #38bdf8 0%, #1d4ed8 100%);
+        }
+        /* New Nav Blur */
+        nav {
+            backdrop-filter: blur(8px);
+            background: rgba(2, 6, 23, 0.8);
         }
     </style>
 </head>
-<body>
-    <div class="card">
-        <h1>Your Project Is Running 🎉</h1>
-        <p>
-            This is your new project’s home page.<br>
-            Everything is set up correctly and ready to build on.
-        </p>
-        <p class="hint">
-            You can customize this page by editing <strong>templates/home.html</strong>,<br>
-            or update your routes inside <strong>routes.c</strong> to add new pages.
-        </p>
+<body class="antialiased">
+
+    <div class="hero-glow"></div>
+
+    <nav class="fixed top-0 w-full z-50 border-b border-white/5">
+        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="font-bold tracking-tighter text-xl">CFramework</div>
+            <div class="flex items-center space-x-8 text-sm font-medium text-slate-400">
+                <a href="#quickstart" class="hover:text-white transition-colors">Quick Start</a>
+                <a href="/docs" class="hover:text-white transition-colors">Documentation</a>
+                <a href="https://github.com/PauBatet/CFramework" class="text-blue-400 hover:text-blue-300 transition-colors">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-5xl mx-auto px-6 py-32">
+        <header class="flex flex-col items-center text-center mb-24">
+            <div class="logo-container mb-10 transition-transform hover:scale-[1.01]">
+                <img src="https://github.com/PauBatet/DocumentacioCFramework/blob/76735ecf69410dd16942f3bce822416443dc1678/Logo.png?raw=true" 
+                     alt="C Framework Logo" class="w-72 md:w-96 h-auto object-contain">
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
+                The simple and fast <span class="text-blue-400">C</span> framework
+            </h1>
+            
+            <p class="text-slate-400 text-lg md:text-xl max-w-2xl leading-relaxed">
+                A minimalist web architecture built for simplicity, total control, compiled efficiency and zero bloat.
+            </p>
+
+            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="https://github.com/PauBatet/CFramework" target="_blank" 
+                   class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-10 rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 w-full sm:w-auto">
+                    Download from GitHub
+                </a>
+                <a href="/docs" 
+                   class="bg-slate-800/50 hover:bg-slate-800 text-white border border-slate-700 font-bold py-4 px-10 rounded-xl transition-all active:scale-95 w-full sm:w-auto">
+                    Read the Docs
+                </a>
+            </div>
+        </header>
+
+        <div id="quickstart" class="grid md:grid-cols-2 gap-8 mb-16">
+            <section class="bg-slate-900/40 p-8 rounded-3xl border border-slate-800/50">
+                <div class="step-number w-10 h-10 rounded-lg flex items-center justify-center font-bold mb-6 shadow-inner text-white">1</div>
+                <h3 class="text-xl font-bold mb-4 text-white">Initialize Project</h3>
+                <p class="text-slate-400 mb-6 leading-relaxed">Make the binary executable and generate your project structure in a new directory.</p>
+                <div class="code-block p-5 rounded-xl text-sm leading-relaxed overflow-x-auto shadow-2xl">
+                    <span class="text-blue-400">chmod</span> +x ./CFramework<br>
+                    <span class="text-blue-400">mkdir</span> my_app && <span class="text-blue-400">cd</span> my_app<br>
+                    ./CFramework
+                </div>
+            </section>
+
+            <section class="bg-slate-900/40 p-8 rounded-3xl border border-slate-800/50">
+                <div class="step-number w-10 h-10 rounded-lg flex items-center justify-center font-bold mb-6 shadow-inner text-white">2</div>
+                <h3 class="text-xl font-bold mb-4 text-white">Run it!</h3>
+                <p class="text-slate-400 mb-6 leading-relaxed">Run the built-in migrations and start the server. Your app will be live on port 8080.</p>
+                <div class="code-block p-5 rounded-xl text-sm leading-relaxed overflow-x-auto shadow-2xl">
+                    <span class="text-emerald-400">make</span> migrate<br>
+                    <span class="text-emerald-400">make</span> run
+                </div>
+            </section>
+        </div>
+
+        <section class="mt-12 text-center">
+            <h2 class="text-2xl font-bold mb-8">Ready to Build</h2>
+            <div class="rounded-3xl border border-slate-800 p-2 bg-slate-900/60 shadow-2xl inline-block max-w-full overflow-hidden">
+                <div class="flex items-center space-x-2 px-4 py-2 border-b border-slate-800/50">
+                    <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+                    <span class="text-xs text-slate-500 font-mono ml-2">localhost:8080</span>
+                </div>
+                <img src="https://github.com/PauBatet/DocumentacioCFramework/blob/76735ecf69410dd16942f3bce822416443dc1678/Home_page.png?raw=true" 
+                     alt="C Framework Welcome Page" class="rounded-b-2xl w-full max-w-4xl">
+            </div>
+        </section>
+
+        <footer class="mt-32 pt-12 border-t border-slate-900 text-center">
+            <p class="text-slate-600 text-sm tracking-wide uppercase font-semibold">&copy; 2024 C Framework &bull; Optimized for efficiency</p>
+        </footer>
     </div>
+
 </body>
 </html>
 
