@@ -8,6 +8,32 @@
 #include<arpa/inet.h>
 #include<stdlib.h>
 
+static int hex_to_int(char c) {
+    if (c >= '0' && c <= '9') return c - '0';
+    if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+    if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+    return 0;
+}
+
+void url_decode(char *str) {
+    char *src = str;
+    char *dst = str;
+    while (*src) {
+        if (*src == '%' && src[1] && src[2]) {
+            *dst = (hex_to_int(src[1]) << 4) | hex_to_int(src[2]);
+            src += 3;
+        } else if (*src == '+') {
+            *dst = ' ';
+            src++;
+        } else {
+            *dst = *src;
+            src++;
+        }
+        dst++;
+    }
+    *dst = '\0';
+}
+
 bool HTTPRequest_add_header(HTTPRequest *req, const char *key, const char *value) {
     if (!req || !key || !value) return false;
 
@@ -97,15 +123,24 @@ static void parse_query_params(HTTPRequest *req, char *query) {
 
     while (pair) {
         char *eq = strchr(pair, '=');
+        char *key = pair;
+        char *value = "";
 
-        if (!HTTPRequest_add_param(req, pair, eq ? eq + 1 : "")) {
+        if (eq) {
+            *eq = '\0';
+            value = eq + 1;
+        }
+
+        url_decode(key);
+        url_decode(value);
+
+        if (!HTTPRequest_add_param(req, key, value)) {
             perror("Failed to add query param");
             return;
         }
         pair = strtok(NULL, "&");
     }
 }
-
 void HTTPRequest_free(HTTPRequest *req) {
     free(req->path);
     free(req->headers);
@@ -239,6 +274,18 @@ HTTPRequest HTTPServer_listen(HTTPServer *server) {
 
         request.body_len = strlen(body);
         request.body = strdup(body);
+    }
+
+    if (request.body && (strcmp(request.method, "POST") == 0 || 
+                         strcmp(request.method, "PUT") == 0 || 
+                         strcmp(request.method, "PATCH") == 0)) {
+        
+        const char *content_type = HTTPRequest_get_header(&request, "Content-Type");
+        if (content_type && strstr(content_type, "application/x-www-form-urlencoded")) {
+            char *body_copy = strdup(request.body);
+            parse_query_params(&request, body_copy);
+            free(body_copy);
+        }
     }
 
     request.client_socket = client_socket;

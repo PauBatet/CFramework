@@ -111,6 +111,7 @@ void handle_request(HTTPRequest *request, Database *db) {
     for (int i = 0; routes[i].path != NULL; i++) {
         if (route_match(routes[i].path, request->path, request)) {
             // ---- Print query params ----
+            /*
             if (request->param_count > 0) {
                 printf("Query params:\n");
                 for (size_t j = 0; j < request->param_count; j++) {
@@ -128,11 +129,12 @@ void handle_request(HTTPRequest *request, Database *db) {
                         request->header_list[j].value ? request->header_list[j].value : "(null)");
                 }
             }
+            */
             routes[i].handler(request, db);
             return;
         }
     }
-    HTTPServer_send_response(request, "", "", 404, "<h1>404 Not Found</h1>");
+    HTTPServer_send_response(request, "<h1>404 Not Found</h1>", "", 404, "");
 }
 
 // Worker thread function
@@ -225,6 +227,8 @@ int run_worker() {
 int main() {
     setvbuf(stdout, NULL, _IONBF, 0);
     setvbuf(stderr, NULL, _IONBF, 0);
+    signal(SIGPIPE, SIG_IGN);
+
     load_config_from_env();
     bool in_container = (getpid() == 1);
 
